@@ -1,4 +1,51 @@
+# =========================
+# Entornos virtuales
+# =========================
 venv/
-.venv
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
 
-posters
+# =========================
+# uv (Python package manager)
+# =========================
+.uv/
+uv.lock
+
+# =========================
+# Cachés de Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cachés de herramientas
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# =========================
+# Archivos del sistema
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Carpeta con imágenes grandes
+# =========================
+Posters/
+
+# =========================
+# Archivos temporales
+# =========================
+*.log
+*.tmp
+*.swp

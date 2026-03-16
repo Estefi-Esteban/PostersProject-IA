@@ -2,4 +2,4 @@ streamlit
 pillow
 sentence-transformers
 torch
-scikit-learn
+imagehash
