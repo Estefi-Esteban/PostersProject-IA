@@ -32,11 +32,17 @@ El sistema analiza las imágenes en dos fases para optimizar rendimiento y preci
     ```
 
     **Opción B: Usando uv (Recomendado por velocidad)**
+    
+    Requiere tener [uv](https://docs.astral.sh/uv/) instalado. Puedes instalarlo con:
     ```bash
-    uv venv
-    source .venv\Scripts\activate 
-    uv pip install -r requirements.txt
+    curl -LsSf https://astral.sh/uv/install.sh | sh
     ```
+
+    Una vez instalado, sincroniza las dependencias del proyecto:
+    ```bash
+    uv sync
+    ```
+    Esto creará automáticamente el entorno virtual y descargará todas las dependencias.
 
 ---
 
@@ -47,7 +53,11 @@ El proyecto tiene dos formas de ejecutarse dependiendo de lo que necesites hacer
 Para visualizar el análisis, ajustar parámetros en tiempo real y subir archivos ZIP o sueltos:
 
 ```bash
+# Con el entorno virtual activado (Opción A)
 streamlit run app.py
+
+# Con uv (Opción B)
+uv run streamlit run app.py
 ```
 Se abrirá una pestaña en tu navegador web automáticamente.
 
@@ -56,7 +66,11 @@ Se abrirá una pestaña en tu navegador web automáticamente.
 Si solo quieres limpiar una carpeta de forma automática conservando los archivos de mayor calidad:
 
 ```bash
+# Con el entorno virtual activado (Opción A)
 python core.py
+
+# Con uv (Opción B)
+uv run python core.py
 ```
 
 **Nota:** Al ejecutar core.py por primera vez, se creará automáticamente una carpeta llamada posters en la raíz del proyecto. Solo tienes que meter tus imágenes ahí dentro y volver a ejecutar el script.

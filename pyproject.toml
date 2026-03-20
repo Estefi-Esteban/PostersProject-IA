@@ -1,0 +1,23 @@
+[project]
+name = "postersprojec-ia"
+version = "0.1.0"
+description = "Analizador visual híbrido para clasificar campañas publicitarias, detectar pósters duplicados y agrupar variantes visuales usando pHash e IA (CLIP)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "streamlit",
+    "pillow",
+    "sentence-transformers",
+    "torch",
+    "imagehash",
+]
+
+[project.scripts]
+dashboard = "streamlit:cli.main_run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = false
