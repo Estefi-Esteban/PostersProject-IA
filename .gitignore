@@ -39,10 +39,9 @@ Thumbs.db
 .ipynb_checkpoints/
 
 # =========================
-# Carpeta con imágenes grandes
+# Carpeta con imágenes (Input/Outputs locales)
 # =========================
-Posters/
-posters/
+data/posters/
 
 # =========================
 # Archivos temporales

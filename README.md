@@ -4,89 +4,65 @@ Un analizador visual híbrido diseñado para clasificar campañas publicitarias,
 
 ## 🚀 Características Principales
 
-Este proyecto se divide en dos módulos principales:
+Este proyecto se divide en dos módulos principales integrados en una arquitectura modular:
 
-* **`app.py` (Dashboard Visual):** Una interfaz web interactiva construida con Streamlit. Permite subir imágenes sueltas o archivos `.ZIP`, ajustar los parámetros de tolerancia en tiempo real y visualizar de forma gráfica las "familias visuales" y los pósters únicos.
-* **`core.py` (Motor de Producción):** Un script *headless* (sin interfaz) diseñado para procesar carpetas enteras de forma masiva. Ideal para automatizar la limpieza de archivos, conservando solo la imagen de mayor calidad (resolución) por cada grupo de duplicados/variantes.
+*   **Dashboard Visual (Streamlit):** Interfaz interactiva para subir imágenes sueltas o archivos `.ZIP`, ajustar parámetros y visualizar "familias visuales".
+*   **Motor de Análisis (Engine):** Lógica centralizada para procesar carpetas masivas, conservando solo la imagen de mayor calidad por cada grupo.
 
 ## 🧠 ¿Cómo funciona el Filtro Híbrido?
 
-El sistema analiza las imágenes en dos fases para optimizar rendimiento y precisión:
-
-1.  **Fase 1: La Barredora (pHash):** Busca clones exactos o imágenes con variaciones minúsculas (compresión, pequeños recortes). Es muy rápido y descarta la "basura" evidente.
-2.  **Fase 2: El Ojo Clínico (IA - CLIP):** Utiliza el modelo `clip-ViT-B-32` de OpenAI (vía `sentence-transformers`) para "entender" la composición de la imagen. Agrupa variantes (por ejemplo, el mismo póster pero con textos en distintos idiomas o ligeros cambios de diseño).
+1.  **Fase 1: La Barredora (pHash):** Busca clones exactos o imágenes con variaciones minúsculas.
+2.  **Fase 2: El Ojo Clínico (IA - CLIP):** Utiliza `clip-ViT-B-32` para entender la composición y agrupar variantes (misma temática, distinto texto o diseño).
 
 ## 🛠️ Instalación
 
-1. Clona este repositorio:
-   ```bash
-   git clone [https://github.com/Estefi-Esteban/PostersProject-IA]
-   cd PostersProject-IA
-
-2. Crea un entorno virtual e instala las dependencias. Puedes usar el método tradicional con Python o la alternativa ultrarrápida con uv:
-
-    **Opción A: Python tradicional (venv + pip)**
+1.  **Clonar el repositorio:**
     ```bash
-    python -m venv venv 
-    source venv\Scripts\activate
+    git clone https://github.com/Estefi-Esteban/PostersProject-IA
+    cd PostersProject-IA
     ```
 
-    **Opción B: Usando uv (Recomendado por velocidad)**
-    
-    Requiere tener [uv](https://docs.astral.sh/uv/) instalado. Puedes instalarlo con:
-    ```bash
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    ```
-
-    Una vez instalado, sincroniza las dependencias del proyecto:
+2.  **Configurar entorno con [uv](https://docs.astral.sh/uv/) (Recomendado):**
     ```bash
     uv sync
     ```
-    Esto creará automáticamente el entorno virtual y descargará todas las dependencias.
 
 ---
 
-## 💻 Uso
-El proyecto tiene dos formas de ejecutarse dependiendo de lo que necesites hacer:
+## 💻 Uso (Nueva Estructura)
 
-**1. Interfaz Gráfica (Dashboard)**
-Para visualizar el análisis, ajustar parámetros en tiempo real y subir archivos ZIP o sueltos:
-
+### 1. Interfaz Gráfica (Dashboard)
+Para visualizar el análisis y subir archivos:
 ```bash
-# Con el entorno virtual activado (Opción A)
-streamlit run app.py
-
-# Con uv (Opción B)
-uv run streamlit run app.py
-```
-Se abrirá una pestaña en tu navegador web automáticamente.
-
-
-**2. Script de Limpieza Masiva (Terminal)**
-Si solo quieres limpiar una carpeta de forma automática conservando los archivos de mayor calidad:
-
-```bash
-# Con el entorno virtual activado (Opción A)
-python core.py
-
-# Con uv (Opción B)
-uv run python core.py
+uv run streamlit run src/web/app.py
 ```
 
-**Nota:** Al ejecutar core.py por primera vez, se creará automáticamente una carpeta llamada posters en la raíz del proyecto. Solo tienes que meter tus imágenes ahí dentro y volver a ejecutar el script.
+### 2. Limpieza Masiva (Terminal)
+Para limpiar automáticamente la carpeta de imágenes configurada:
+```bash
+uv run python scripts/run_cleanup.py
+```
+
+**Nota:** Por defecto, el script busca imágenes en `data/posters/`. Si la carpeta no existe, el script la creará por ti.
 
 ---
 
-## 📂 Estructura del Proyecto
+## 📂 Estructura del Proyecto (Senior)
 ```text
 PostersProject-IA/
-│
-├── app.py               # Interfaz de usuario con Streamlit
-├── core.py              # Lógica interna y ejecución por terminal
-├── requirements.txt     # Dependencias del proyecto
-├── .gitignore           # Archivos ignorados por Git
-├── README.md            # Documentación
-└── posters/             # (Se genera automáticamente) Carpeta de prueba
+├── data/
+│   └── posters/          # Carpeta para tus imágenes (Input)
+├── scripts/
+│   └── run_cleanup.py    # Punto de entrada para ejecución CLI
+├── src/
+│   ├── core/
+│   │   ├── analyzer.py   # Motor de análisis (Lógica)
+│   │   └── paths.py      # Gestión centralizada de rutas
+│   └── web/
+│       └── app.py        # Interfaz de usuario (Streamlit)
+├── pyproject.toml
+├── README.md
+└── .gitignore
 ```
 
 ---
