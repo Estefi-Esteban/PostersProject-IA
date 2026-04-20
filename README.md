@@ -1,68 +1,80 @@
-# 🎞️ Poster Match (PostersProject-IA)
+# 🎞️ Visual Match Pro (AI Deduplicator)
 
-Un analizador visual híbrido diseñado para clasificar campañas publicitarias, detectar pósters duplicados y agrupar variantes visuales. Utiliza una combinación de algoritmos tradicionales (pHash) e Inteligencia Artificial (CLIP) para limpiar y organizar directorios de imágenes masivos.
+An advanced, production-ready AI image deduplication engine. This project utilizes a hybrid mathematical and artificial intelligence approach to group visual collections, automatically detecting identical clones and semantic variants (e.g., same composition, different texts or compression ratios).
 
-## 🚀 Características Principales
+If you are a Recruiter or Developer, this project showcases my abilities in **Software Engineering**, **Applied AI (HuggingFace/SentenceTransformers)**, **Asynchronous Processing**, and **Data Pipeline Management**.
 
-Este proyecto se divide en dos módulos principales integrados en una arquitectura modular:
+## 🚀 Key Features
 
-*   **Dashboard Visual (Streamlit):** Interfaz interactiva para subir imágenes sueltas o archivos `.ZIP`, ajustar parámetros y visualizar "familias visuales".
-*   **Motor de Análisis (Engine):** Lógica centralizada para procesar carpetas masivas, conservando solo la imagen de mayor calidad por cada grupo.
+This project utilizes a **Cluster-First Greedy-Pruning** architecture, moving away from naive matching, achieving highly accurate semantic groupings without losing visual fidelity:
 
-## 🧠 ¿Cómo funciona el Filtro Híbrido?
+*   **Fase 0 - Stress Filtering:** Automatically rejects files not matching minimum printing specs.
+*   **Fase 1 - CLIP Semantic librarian:** Utilizes `clip-ViT-B-32` to mathematically 'understand' composition concepts and groups related image variations into families.
+*   **Fase 2 - pHash Clone Limiter:** Within confirmed semantic families, heavily prunes structural clones (miniscule compressions, identical variants) via hashing matrices.
+*   **Zero-Disk Memory Pipeline:** Includes advanced DevOps scripts (`db_purger.py`) mapped to memory through `io.BytesIO` and asynchronous network layers, preventing disk SSD damage in massive SQL operations. 
 
-1.  **Fase 1: La Barredora (pHash):** Busca clones exactos o imágenes con variaciones minúsculas.
-2.  **Fase 2: El Ojo Clínico (IA - CLIP):** Utiliza `clip-ViT-B-32` para entender la composición y agrupar variantes (misma temática, distinto texto o diseño).
+## 🛠️ Installation
 
-## 🛠️ Instalación
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Estefi-Esteban/VisualMatch-AI
+   cd VisualMatch-AI
+   ```
 
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone https://github.com/Estefi-Esteban/PostersProject-IA
-    cd PostersProject-IA
-    ```
-
-2.  **Configurar entorno con [uv](https://docs.astral.sh/uv/) (Recomendado):**
-    ```bash
-    uv sync
-    ```
+2. **System Setup using [uv](https://docs.astral.sh/uv/) (Highly Recommended):**
+   *(uv handles virtual environments natively and downloads packages instantly)*
+   ```bash
+   uv sync
+   ```
 
 ---
 
-## 💻 Uso (Nueva Estructura)
+## 💻 Usage & Demos
 
-### 1. Interfaz Gráfica (Dashboard)
-Para visualizar el análisis y subir archivos:
+### 1. Interactive UI Dashboard (`src/web/app.py`)
+Run the Streamlit frontend. It applies the Singleton-managed CLIP model to analyze uploaded ZIP files or drag-and-dropped images, rendering aesthetic classifications logic live.
+
 ```bash
 uv run streamlit run src/web/app.py
 ```
 
-### 2. Limpieza Masiva (Terminal)
-Para limpiar automáticamente la carpeta de imágenes configurada:
+### 2. Automated File Purging (`scripts/local_purger.py`)
+Drop any batch of images into `data/posters/` and execute this local implementation of the AI purger.
+
 ```bash
-uv run python scripts/run_cleanup.py
+uv run python scripts/local_purger.py
 ```
 
-**Nota:** Por defecto, el script busca imágenes en `data/posters/`. Si la carpeta no existe, el script la creará por ti.
+### 3. Database Async Purging (`scripts/db_purger.py`)
+The enterprise solution. Acts as an asynchronous backend service. It connects to SQL interfaces and reads raw remote links, computing neural embeddings fully in RAM, followed by targeted forced garbage collection (`gc.collect`) to prevent GPU/RAM memory leaks.
+
+```bash
+# Note: Fails gracefully and alerts you if SQL DB schema does not exist locally.
+uv run python scripts/db_purger.py
+```
 
 ---
 
-## 📂 Estructura del Proyecto (Senior)
+## 📂 Architecture Layout
+
 ```text
-PostersProject-IA/
+VisualMatch-AI/
 ├── data/
-│   └── posters/          # Carpeta para tus imágenes (Input)
+│   └── posters/          # General local directory for testing files
 ├── scripts/
-│   └── run_cleanup.py    # Punto de entrada para ejecución CLI
+│   ├── local_purger.py   # General folder parsing script
+│   └── db_purger.py      # Async DB/Network operations
 ├── src/
 │   ├── core/
-│   │   ├── analyzer.py   # Motor de análisis (Lógica)
-│   │   └── paths.py      # Gestión centralizada de rutas
+│   │   ├── analyzer.py   # AI & Mathematical Engine (Singleton pattern)
+│   │   └── paths.py      # Cross-OS path resolvers
 │   └── web/
-│       └── app.py        # Interfaz de usuario (Streamlit)
-├── pyproject.toml
-├── README.md
-└── .gitignore
+│       └── app.py        # Streamlit graphical interface
+├── legacy/               # Archive of early monolithic prototypes
+├── pyproject.toml        
+└── README.md
 ```
 
 ---
+
+**Developed strictly focusing on Memory Efficency, Pattern Classification, and Production Robustness.**

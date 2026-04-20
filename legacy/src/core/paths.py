@@ -1,6 +1,6 @@
 from pathlib import Path
 
-# Project Root (VisualMatch-AI/)
+# Project Root (PostersProject-IA/)
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Source Code
