@@ -3,17 +3,31 @@ import imagehash
 from PIL import Image
 from sentence_transformers import SentenceTransformer, util
 import warnings
+from src.core.paths import POSTERS_DIR
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
-print("⏳ Cargando modelo de IA (CLIP)...")
-MODELO_IA = SentenceTransformer('clip-ViT-B-32')
+# Singleton for the model to avoid re-loading
+_MODELO_IA = None
+
+def get_model():
+    global _MODELO_IA
+    if _MODELO_IA is None:
+        print("⏳ Cargando modelo de IA (CLIP)...")
+        _MODELO_IA = SentenceTransformer('clip-ViT-B-32')
+    return _MODELO_IA
 
 def limpiar_carpeta_hibrido(ruta_carpeta, limite_phash=5, umbral_ia=0.88):
     """
     Algoritmo de producción para procesar masivamente sin interfaz.
     Devuelve la lista de archivos definitivos que debes conservar.
     """
+    modelo = get_model()
+    
+    if not os.path.exists(ruta_carpeta):
+        print(f"⚠️ La carpeta {ruta_carpeta} no existe.")
+        return []
+
     archivos = [f for f in os.listdir(ruta_carpeta) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
     
     if len(archivos) <= 1:
@@ -68,7 +82,7 @@ def limpiar_carpeta_hibrido(ruta_carpeta, limite_phash=5, umbral_ia=0.88):
     indices_descartados = set()
     
     rutas_fase2 = [p['ruta'] for p in sobrevivientes_fase1]
-    embeddings = MODELO_IA.encode(rutas_fase2, convert_to_numpy=True)
+    embeddings = modelo.encode(rutas_fase2, convert_to_numpy=True)
 
     for i in range(len(sobrevivientes_fase1)):
         if i in indices_descartados: continue
@@ -87,13 +101,7 @@ def limpiar_carpeta_hibrido(ruta_carpeta, limite_phash=5, umbral_ia=0.88):
     print(f"✅ Resultado final: De {len(posters)} pósters, nos quedamos con {len(posters_finales)}")
     return [p['archivo'] for p in posters_finales]
 
-# --- ZONA DE PRUEBA ---
 if __name__ == "__main__":
-    carpeta_prueba = "posters"
-    if not os.path.exists(carpeta_prueba):
-        os.makedirs(carpeta_prueba)
-        print(f"📁 He creado la carpeta '{carpeta_prueba}'. ¡Mete imágenes y ejecuta!")
-    else:
-        definitivos = limpiar_carpeta_hibrido(carpeta_prueba)
-        print(f"\n🌟 ARCHIVOS A CONSERVAR: {definitivos}")
-
+    # Test execution using standard data directory
+    definitivos = limpiar_carpeta_hibrido(str(POSTERS_DIR))
+    print(f"\n🌟 ARCHIVOS A CONSERVAR EN {POSTERS_DIR}: {definitivos}")

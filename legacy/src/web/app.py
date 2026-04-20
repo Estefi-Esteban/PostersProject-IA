@@ -1,9 +1,13 @@
 import streamlit as st
 import imagehash
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import util
 from PIL import Image
 import zipfile
 import io
+
+# Senior Imports
+from src.core.analyzer import get_model
+from src.core.paths import POSTERS_DIR
 
 # 1. Configuración de página
 st.set_page_config(page_title="Poster Match Pro", page_icon="🎞️", layout="wide")
@@ -22,10 +26,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 @st.cache_resource
-def cargar_modelo():
-    return SentenceTransformer('clip-ViT-B-32')
+def load_analysis_model():
+    return get_model()
 
-modelo = cargar_modelo()
+modelo = load_analysis_model()
 
 # --- PANEL LATERAL DE CONTROL ---
 st.sidebar.header("⚙️ Ajustes de Precisión")

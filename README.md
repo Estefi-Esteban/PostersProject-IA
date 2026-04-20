@@ -1,78 +1,80 @@
-# 🎞️ Poster Match (PostersProject-IA)
+# 🎞️ Visual Match Pro (AI Deduplicator)
 
-Un analizador visual híbrido diseñado para clasificar campañas publicitarias, detectar pósters duplicados y agrupar variantes visuales. Utiliza una combinación de algoritmos tradicionales (pHash) e Inteligencia Artificial (CLIP) para limpiar y organizar directorios de imágenes masivos.
+An advanced, production-ready AI image deduplication engine. This project utilizes a hybrid mathematical and artificial intelligence approach to group visual collections, automatically detecting identical clones and semantic variants (e.g., same composition, different texts or compression ratios).
 
-## 🚀 Características Principales
+If you are a Recruiter or Developer, this project showcases my abilities in **Software Engineering**, **Applied AI (HuggingFace/SentenceTransformers)**, **Asynchronous Processing**, and **Data Pipeline Management**.
 
-Este proyecto se divide en dos módulos principales:
+## 🚀 Key Features
 
-* **`app.py` (Dashboard Visual):** Una interfaz web interactiva construida con Streamlit. Permite subir imágenes sueltas o archivos `.ZIP`, ajustar los parámetros de tolerancia en tiempo real y visualizar de forma gráfica las "familias visuales" y los pósters únicos.
-* **`core.py` (Motor de Producción):** Un script *headless* (sin interfaz) diseñado para procesar carpetas enteras de forma masiva. Ideal para automatizar la limpieza de archivos, conservando solo la imagen de mayor calidad (resolución) por cada grupo de duplicados/variantes.
+This project utilizes a **Cluster-First Greedy-Pruning** architecture, moving away from naive matching, achieving highly accurate semantic groupings without losing visual fidelity:
 
-## 🧠 ¿Cómo funciona el Filtro Híbrido?
+*   **Fase 0 - Stress Filtering:** Automatically rejects files not matching minimum printing specs.
+*   **Fase 1 - CLIP Semantic librarian:** Utilizes `clip-ViT-B-32` to mathematically 'understand' composition concepts and groups related image variations into families.
+*   **Fase 2 - pHash Clone Limiter:** Within confirmed semantic families, heavily prunes structural clones (miniscule compressions, identical variants) via hashing matrices.
+*   **Zero-Disk Memory Pipeline:** Includes advanced DevOps scripts (`db_purger.py`) mapped to memory through `io.BytesIO` and asynchronous network layers, preventing disk SSD damage in massive SQL operations. 
 
-El sistema analiza las imágenes en dos fases para optimizar rendimiento y precisión:
+## 🛠️ Installation
 
-1.  **Fase 1: La Barredora (pHash):** Busca clones exactos o imágenes con variaciones minúsculas (compresión, pequeños recortes). Es muy rápido y descarta la "basura" evidente.
-2.  **Fase 2: El Ojo Clínico (IA - CLIP):** Utiliza el modelo `clip-ViT-B-32` de OpenAI (vía `sentence-transformers`) para "entender" la composición de la imagen. Agrupa variantes (por ejemplo, el mismo póster pero con textos en distintos idiomas o ligeros cambios de diseño).
-
-## 🛠️ Instalación
-
-1. Clona este repositorio:
+1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/Estefi-Esteban/PostersProject-IA]
-   cd PostersProject-IA
+   git clone https://github.com/Estefi-Esteban/VisualMatch-AI
+   cd VisualMatch-AI
+   ```
 
-2. Crea un entorno virtual e instala las dependencias. Puedes usar el método tradicional con Python o la alternativa ultrarrápida con uv:
-
-    **Opción A: Python tradicional (venv + pip)**
-    ```bash
-    python -m venv venv 
-    source venv\Scripts\activate
-    ```
-
-    **Opción B: Usando uv (Recomendado por velocidad)**
-    ```bash
-    uv venv
-    source .venv\Scripts\activate 
-    uv pip install -r requirements.txt
-    ```
+2. **System Setup using [uv](https://docs.astral.sh/uv/) (Highly Recommended):**
+   *(uv handles virtual environments natively and downloads packages instantly)*
+   ```bash
+   uv sync
+   ```
 
 ---
 
-## 💻 Uso
-El proyecto tiene dos formas de ejecutarse dependiendo de lo que necesites hacer:
+## 💻 Usage & Demos
 
-**1. Interfaz Gráfica (Dashboard)**
-Para visualizar el análisis, ajustar parámetros en tiempo real y subir archivos ZIP o sueltos:
-
-```bash
-streamlit run app.py
-```
-Se abrirá una pestaña en tu navegador web automáticamente.
-
-
-**2. Script de Limpieza Masiva (Terminal)**
-Si solo quieres limpiar una carpeta de forma automática conservando los archivos de mayor calidad:
+### 1. Interactive UI Dashboard (`src/web/app.py`)
+Run the Streamlit frontend. It applies the Singleton-managed CLIP model to analyze uploaded ZIP files or drag-and-dropped images, rendering aesthetic classifications logic live.
 
 ```bash
-python core.py
+uv run streamlit run src/web/app.py
 ```
 
-**Nota:** Al ejecutar core.py por primera vez, se creará automáticamente una carpeta llamada posters en la raíz del proyecto. Solo tienes que meter tus imágenes ahí dentro y volver a ejecutar el script.
+### 2. Automated File Purging (`scripts/local_purger.py`)
+Drop any batch of images into `data/posters/` and execute this local implementation of the AI purger.
+
+```bash
+uv run python scripts/local_purger.py
+```
+
+### 3. Database Async Purging (`scripts/db_purger.py`)
+The enterprise solution. Acts as an asynchronous backend service. It connects to SQL interfaces and reads raw remote links, computing neural embeddings fully in RAM, followed by targeted forced garbage collection (`gc.collect`) to prevent GPU/RAM memory leaks.
+
+```bash
+# Note: Fails gracefully and alerts you if SQL DB schema does not exist locally.
+uv run python scripts/db_purger.py
+```
 
 ---
 
-## 📂 Estructura del Proyecto
+## 📂 Architecture Layout
+
 ```text
-PostersProject-IA/
-│
-├── app.py               # Interfaz de usuario con Streamlit
-├── core.py              # Lógica interna y ejecución por terminal
-├── requirements.txt     # Dependencias del proyecto
-├── .gitignore           # Archivos ignorados por Git
-├── README.md            # Documentación
-└── posters/             # (Se genera automáticamente) Carpeta de prueba
+VisualMatch-AI/
+├── data/
+│   └── posters/          # General local directory for testing files
+├── scripts/
+│   ├── local_purger.py   # General folder parsing script
+│   └── db_purger.py      # Async DB/Network operations
+├── src/
+│   ├── core/
+│   │   ├── analyzer.py   # AI & Mathematical Engine (Singleton pattern)
+│   │   └── paths.py      # Cross-OS path resolvers
+│   └── web/
+│       └── app.py        # Streamlit graphical interface
+├── legacy/               # Archive of early monolithic prototypes
+├── pyproject.toml        
+└── README.md
 ```
 
 ---
+
+**Developed strictly focusing on Memory Efficency, Pattern Classification, and Production Robustness.**

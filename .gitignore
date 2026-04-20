@@ -42,6 +42,7 @@ Thumbs.db
 # Carpeta con imágenes grandes
 # =========================
 Posters/
+posters/
 
 # =========================
 # Archivos temporales
@@ -49,3 +50,5 @@ Posters/
 *.log
 *.tmp
 *.swp
+
+prueba/
